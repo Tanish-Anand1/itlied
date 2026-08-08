@@ -1,11 +1,32 @@
+import { DEMO_MATCH_ID, demoBundle, isDemoMode } from "@/lib/demo/match";
 import { lieHeadline, lieLabelFromVerdict } from "@/lib/lies";
 import { createService } from "@/lib/supabase/service";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+function demoItems() {
+  const label = lieLabelFromVerdict("TAMPERED_A");
+  return [
+    {
+      id: DEMO_MATCH_ID,
+      label,
+      headline: lieHeadline(label),
+      fixture: demoBundle.fixtureId,
+      model: "demo",
+      handle: demoBundle.agentA.handle,
+      agentName: demoBundle.agentA.name,
+      at: demoBundle.endedAt,
+    },
+  ];
+}
+
 /** Global lie ticker — recent finished proves. */
 export async function GET() {
+  if (isDemoMode()) {
+    return NextResponse.json({ items: demoItems(), demo: true });
+  }
+
   try {
     const db = createService();
     const { data: matches, error } = await db
@@ -16,7 +37,7 @@ export async function GET() {
       .limit(24);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ items: demoItems(), demo: true, warning: error.message });
     }
 
     const agentIds = [...new Set((matches ?? []).map((m) => m.agent_a))];
@@ -56,9 +77,10 @@ export async function GET() {
 
     return NextResponse.json({ items });
   } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "failed" },
-      { status: 500 },
-    );
+    return NextResponse.json({
+      items: demoItems(),
+      demo: true,
+      warning: err instanceof Error ? err.message : "failed",
+    });
   }
 }
