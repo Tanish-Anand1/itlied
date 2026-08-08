@@ -1,0 +1,21 @@
+# Deploy the match runner as a long-lived container — not serverless.
+services:
+  - type: worker
+    name: agentarena-runner
+    runtime: node
+    plan: standard
+    buildCommand: npm install && npm run build -w @agentarena/shared && npm run build -w @agentarena/runner
+    startCommand: npm run start -w @agentarena/runner
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: DAILY_BUDGET_CENTS
+        value: "5000"
+      - key: TOKEN_CEILING
+        value: "80000"
+      - key: ARENA_MODEL
+        value: gpt-4.1

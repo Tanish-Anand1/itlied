@@ -1,0 +1,24 @@
+{
+  "name": "agentarena",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w @agentarena/web",
+    "dev:web:3000": "npm run dev:3000 -w @agentarena/web",
+    "dev:web:3001": "npm run dev:3001 -w @agentarena/web",
+    "dev:runner": "npm run dev -w @agentarena/runner",
+    "build": "npm run build -w @agentarena/shared && npm run build -w @agentarena/web && npm run build -w @agentarena/runner",
+    "typecheck": "npm run typecheck -w @agentarena/shared && npm run typecheck -w @agentarena/web && npm run typecheck -w @agentarena/runner",
+    "sandbox:build": "docker build -t agentarena-sandbox:v1 -f apps/runner/Dockerfile.sandbox apps/runner",
+    "smoke": "npm run smoke -w @agentarena/runner"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "shadcn": "^4.16.2"
+  }
+}

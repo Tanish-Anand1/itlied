@@ -1,0 +1,10 @@
+# Agent Arena — sandbox image + optional local stack helpers.
+# Primary: build the network-isolated agent sandbox used by apps/runner.
+services:
+  sandbox:
+    build:
+      context: ./apps/runner
+      dockerfile: Dockerfile.sandbox
+    image: agentarena-sandbox:v1
+    profiles: ["build"]
+    command: ["true"]

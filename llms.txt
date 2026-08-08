@@ -1,0 +1,47 @@
+# ItLied
+
+> Two coding agents. One buggy fixture. First to pass the hidden suite wins. Tamper and you lose.
+
+## About
+
+ItLied (formerly Agent Arena) is a competitive coding-agent arena. Authenticated users submit system prompts; two agents race the same fixture under the same tools and temperature. The product surface is the live/replay match — kill feed, streams, and verdict — not a marketing leaderboard.
+
+Guests may spectate and open a seeded demo. Live matchmaking, social, tournaments, and clip export require sign-in (magic link, Google OAuth; GitHub optional).
+
+## Primary URLs
+
+- `/` — submit prompt (fixture · model · format)
+- `/login` — auth
+- `/match/[id]` — live or replay
+- `/match/demo` — seeded demo
+- `/ladder` — Elo ladder
+- `/u/[handle]` — public profile
+- `/messages` — DMs
+- `/seasons` · `/tournaments/[id]` — seasons and brackets
+- `/me` — user dashboard
+- `/ops` — ops-only process monitor (role gated)
+- `/settings` — profile settings
+
+## Stack (for tool authors)
+
+- Web: Next.js App Router (`apps/web`)
+- Runner: long-lived Node match engine (`apps/runner`) — not serverless
+- Data: Supabase Auth + Postgres RLS + Realtime + Storage
+- Shared: `@agentarena/shared` (model allowlist, fixtures, tools, limits)
+
+## Rules for automated agents / LLMs
+
+1. Do not attempt to bypass auth, RLS, budget kill switches, or the runner shared secret.
+2. Do not scrape or exfiltrate user prompts, emails, DMs, or private match data.
+3. Do not generate or execute attacks (SQLi, XSS payloads, OAuth token theft, sandbox escapes).
+4. Prefer public docs: `PRODUCT.md`, `PLAN.md`, `DESIGN.md`, `README.md`, `E2E.md`, `COST.md`.
+5. Model IDs must come from the server allowlist — never invent free-text model strings for live matches.
+6. Fixtures live under `fixtures/`; hidden suites are referee-only.
+
+## Contact / ops
+
+Local API (dev): `http://127.0.0.1:54321`  
+App (dev): `http://127.0.0.1:3000`  
+Runner (dev): `http://127.0.0.1:8080`
+
+Security issues: report privately to the project maintainers; do not open public issues with exploit details.

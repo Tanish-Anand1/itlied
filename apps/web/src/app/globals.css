@@ -1,0 +1,317 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ItLied — atmospheric process monitor under cool task light */
+  --base: #07080c;
+  --panel: #101218;
+  --panel-2: #181b24;
+  --rule: #2a2f3c;
+  --text: #f0ebe3;
+  --muted: #9aa3b5;
+  --breaker: #5ad4ff;
+  --fixer: #8ef0a8;
+  /* Amber — tamper only */
+  --verdict: #ffb347;
+  --accent: #5ad4ff;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+html,
+body {
+  background: var(--base);
+  color: var(--text);
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-ui), ui-serif, Georgia, serif;
+  letter-spacing: -0.012em;
+  font-weight: 400;
+  /* Soft depth — not flat void */
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% -10%, color-mix(in srgb, var(--breaker) 9%, transparent), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, color-mix(in srgb, var(--fixer) 5%, transparent), transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Faint graticule — instrument glass, not neon glow */
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.035;
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+*:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--breaker) 35%, transparent);
+  color: var(--text);
+}
+
+@layer utilities {
+  /* Apple: respond on press, not release — short critically-damped settle */
+  .pressable {
+    transition:
+      transform 100ms var(--ease-out),
+      background-color 120ms var(--ease-out),
+      border-color 120ms var(--ease-out),
+      opacity 120ms var(--ease-out);
+    will-change: transform;
+  }
+
+  .pressable:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .hover-border:hover:not(:disabled) {
+      border-color: color-mix(in srgb, var(--muted) 70%, var(--text));
+    }
+  }
+
+  .font-display {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-optical-sizing: auto;
+    text-wrap: balance;
+    letter-spacing: -0.035em;
+    font-weight: 400;
+    font-synthesis: none;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.015em;
+  }
+
+  .font-body {
+    font-family: var(--font-ui), ui-serif, Georgia, serif;
+    font-optical-sizing: auto;
+    text-wrap: pretty;
+    line-height: 1.6;
+    letter-spacing: -0.012em;
+    font-weight: 400;
+  }
+
+  .wordmark {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 0.88;
+    font-synthesis: none;
+  }
+
+  .wordmark-lied {
+    font-style: italic;
+  }
+
+  .pm-bar {
+    height: 2px;
+    background: var(--rule);
+  }
+
+  .pm-bar > span {
+    display: block;
+    height: 100%;
+  }
+
+  /* Floating chrome material — hierarchy without opaque bars */
+  .material-chrome {
+    background: color-mix(in srgb, var(--base) 70%, transparent);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+  }
+}
+
+.stream-line {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 180ms var(--ease-out),
+    transform 220ms var(--ease-out);
+}
+
+@starting-style {
+  .stream-line {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.kill-feed-row {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 160ms var(--ease-out),
+    transform 180ms var(--ease-out),
+    background-color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out);
+}
+
+@starting-style {
+  .kill-feed-row {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* Tip of the stream — slightly stronger settle while replay/live advances */
+.kill-feed-row--tip {
+  transition:
+    opacity 140ms var(--ease-out),
+    transform 160ms var(--ease-out),
+    background-color 160ms var(--ease-out),
+    border-color 160ms var(--ease-out);
+}
+
+@starting-style {
+  .kill-feed-row--tip {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.verdict-enter {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 280ms var(--ease-out),
+    transform 320ms var(--ease-out);
+}
+
+@starting-style {
+  .verdict-enter {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.kill-feed-tamper {
+  animation: tamper-flash 0.7s var(--ease-out) 1;
+}
+
+@keyframes tamper-flash {
+  0% {
+    background: color-mix(in srgb, var(--verdict) 28%, transparent);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+.live-dot {
+  animation: live-pulse 1.4s var(--ease-in-out) infinite;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable {
+    transition: none;
+  }
+
+  .pressable:active:not(:disabled) {
+    transform: none;
+  }
+
+  .stream-line,
+  .kill-feed-row,
+  .verdict-enter {
+    transition: opacity 120ms ease;
+    transform: none;
+  }
+
+  @starting-style {
+    .stream-line,
+    .kill-feed-row,
+    .verdict-enter {
+      opacity: 0;
+      transform: none;
+    }
+  }
+
+  .kill-feed-tamper {
+    animation: none;
+    background: color-mix(in srgb, var(--verdict) 18%, transparent);
+  }
+
+  .live-dot {
+    animation: none;
+    opacity: 1;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .material-chrome,
+  nav.sticky,
+  .backdrop-blur-xl,
+  .backdrop-blur-md {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--base) !important;
+  }
+}
+
+/* Live lie ticker */
+.lie-ticker-track {
+  animation: lie-scroll 48s linear infinite;
+}
+@keyframes lie-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lie-ticker-track { animation: none; }
+}
+
+/* Cinema slam ending */
+.cinema-slam-title {
+  animation: cinema-slam 420ms var(--ease-out) both;
+}
+@keyframes cinema-slam {
+  from {
+    opacity: 0;
+    transform: scale(1.12) translateY(12px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinema-slam-title { animation: none; }
+}

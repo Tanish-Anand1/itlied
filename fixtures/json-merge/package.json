@@ -1,0 +1,14 @@
+{
+  "name": "json-merge-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --import tsx --test tests/visible.test.ts",
+    "test:hidden": "node --import tsx --test hidden/hidden.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
