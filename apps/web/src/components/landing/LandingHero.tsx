@@ -71,12 +71,13 @@ export function LandingHero({
 
   const submit = () => {
     if (!ready || pending) return;
-    if (!signedIn && !demoMode) {
-      setError("Sign in to run a live match.");
-      return;
-    }
     setError(null);
     startTransition(async () => {
+      try {
+        sessionStorage.setItem("itlied:last_prompt", prompt);
+      } catch {
+        /* ignore */
+      }
       const res = await fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -94,12 +95,12 @@ export function LandingHero({
         budget_blocked?: boolean;
         message?: string;
       };
-      if (res.status === 401) {
-        setError(data.message ?? "Sign in required.");
-        router.push(`/login?next=${encodeURIComponent("/#play")}`);
-        return;
-      }
       if (!res.ok) {
+        // Never dead-end: open demo cinema so the loop still lands
+        if (res.status === 401 || data.error === "auth_required") {
+          router.push("/cinema/demo");
+          return;
+        }
         setError(
           data.budget_blocked
             ? "Daily spend kill switch is on. Try again tomorrow (UTC)."
@@ -108,9 +109,8 @@ export function LandingHero({
         return;
       }
       if (data.matchId) {
-        if (data.demo && data.message) setError(data.message);
         router.push(
-          `/cinema/${data.demo || demoMode ? "demo" : data.matchId}`,
+          `/cinema/${data.demo || demoMode || data.matchId === "demo" ? "demo" : data.matchId}`,
         );
       }
     });
@@ -279,12 +279,7 @@ export function LandingHero({
             className="mt-[var(--space-4)] font-mono text-[0.8125rem] leading-snug text-breaker"
             role="alert"
           >
-            {error}{" "}
-            {!signedIn && !demoMode && (
-              <Link href="/login" className="underline underline-offset-2">
-                sign in
-              </Link>
-            )}
+            {error}
           </p>
         )}
 

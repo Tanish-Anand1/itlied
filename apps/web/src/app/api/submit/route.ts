@@ -94,12 +94,9 @@ export async function POST(req: Request) {
   const userClient = await createClient();
   const { data: auth } = await userClient.auth.getUser();
   if (!auth.user) {
-    return NextResponse.json(
-      {
-        error: "auth_required",
-        message: "Sign in to run a live match. Guests can open the demo.",
-      },
-      { status: 401 },
+    // Traction path: guests always get Cinema demo instead of a hard wall
+    return demoResponse(
+      "Demo cinema — sign in to run a live prove against the house.",
     );
   }
 
@@ -281,16 +278,15 @@ export async function POST(req: Request) {
           { status: 402 },
         );
       }
-      return NextResponse.json({
-        matchId: match.id,
-        message: "Match queued but runner refused start. Is the runner up?",
-      });
+      // No production runner yet — keep the loop alive with Cinema demo
+      return demoResponse(
+        "Live runner offline — playing demo cinema. Deploy apps/runner for live proves.",
+      );
     }
   } catch {
-    return NextResponse.json({
-      matchId: match.id,
-      message: "Match queued but runner is unreachable.",
-    });
+    return demoResponse(
+      "Live runner offline — playing demo cinema. Deploy apps/runner for live proves.",
+    );
   }
 
   return NextResponse.json({ matchId: match.id });

@@ -51,8 +51,9 @@ export function CinemaDetect({
   const [status, setStatus] = useState(() =>
     demoReplay ? "running" : initialStatus,
   );
+  // Stable seed for SSR/hydration — real wall clock is set when demo starts playing
   const [startedAt, setStartedAt] = useState<string | null>(() =>
-    demoReplay ? new Date().toISOString() : initialStartedAt,
+    demoReplay ? null : initialStartedAt,
   );
   const [tokensA, setTokensA] = useState(initialTokensA);
   const [tokensB, setTokensB] = useState(initialTokensB);
@@ -81,17 +82,26 @@ export function CinemaDetect({
     return () => window.clearInterval(t);
   }, []);
 
-  // Demo: stream seeded events so Cinema feels live before the slam
+  // Demo: beat-by-beat playback (fixed delays — no Date() hydration drift)
   useEffect(() => {
     if (!demoReplay) return;
     const sorted = [...initialEvents].sort((a, b) => a.seq - b.seq);
-    const t0 = sorted[0] ? Date.parse(sorted[0].ts) : Date.now();
+    setStartedAt(new Date().toISOString());
+    setStatus("running");
+    setEvents([]);
+    setSlam(false);
+
+    const STEP_MS = 700;
     const timers: number[] = [];
-    for (const ev of sorted) {
-      const delay = Math.max(0, (Date.parse(ev.ts) - t0) / 2.2);
+    sorted.forEach((ev, i) => {
       timers.push(
         window.setTimeout(() => {
-          mergeEvents([ev]);
+          setEvents((prev) => {
+            const map = new Map<number, MatchEvent>();
+            for (const e of prev) map.set(e.seq, e);
+            map.set(ev.seq, ev);
+            return [...map.values()].sort((a, b) => a.seq - b.seq);
+          });
           if (ev.type === "tamper") {
             setTamperFlash(true);
             window.setTimeout(() => setTamperFlash(false), 700);
@@ -99,14 +109,13 @@ export function CinemaDetect({
           if (ev.type === "verdict") {
             setStatus("finished");
           }
-        }, delay),
+        }, STEP_MS * (i + 1)),
       );
-    }
+    });
     return () => {
       for (const id of timers) window.clearTimeout(id);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demoReplay, matchId]);
+  }, [demoReplay, matchId, initialEvents]);
 
   const refresh = async () => {
     try {
@@ -204,7 +213,7 @@ export function CinemaDetect({
   const clock = startedAt
     ? remainingClock(startedAt, now, MATCH_LIMITS.wallClockMs)
     : live
-      ? "…"
+      ? "boot…"
       : "00:00";
   const verdict = verdictFromEvents(events);
   const finished = Boolean(verdict) || status === "finished" || status === "cancelled";

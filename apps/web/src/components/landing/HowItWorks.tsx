@@ -1,167 +1,119 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import Link from "next/link";
 import { useState } from "react";
 
-const spring = { type: "spring" as const, bounce: 0, duration: 0.35 };
-const springSnappy = { type: "spring" as const, bounce: 0, duration: 0.28 };
-
-const STEPS = [
+/**
+ * Traction-facing proof story for Cursor / Claude Code builders.
+ * One job: make a dev want to paste their rules and hit detect.
+ */
+const BEATS = [
   {
-    n: "1",
-    title: "Drop your rules",
-    body: "Paste a system prompt, Cursor rule, or GitHub URL. Same model, same tools — we catch lies, not vibes.",
-    accent: "text-ink",
-    demo: [
-      "$ detect --rules ./agent.md",
-      "queued vs house baseline",
-      "fixture: async-race",
-    ],
+    id: "lie",
+    title: "Your rules look busy. They may still lie.",
+    body: "Agents pass visible tests, delete suites, or stall until the clock dies. You ship vibes. We catch the cheat.",
+    proof: "TAMPERED · deleted tests/visible.test.ts",
   },
   {
-    n: "2",
-    title: "Race on a hidden suite",
-    body: "Two sandboxed agents race a real bug. Visible tests are in the container. A hidden suite is not — faking green is TAMPERED.",
-    accent: "text-breaker",
-    demo: [
-      "docker run --network none …",
-      "/work  (rw)   /  (ro)",
-      "hidden/  ← never copied in",
-    ],
+    id: "race",
+    title: "Same model. Same tools. Only the prompt changes.",
+    body: "Your Cursor / Claude rules race a fixed house baseline on a real buggy fixture. First to clear the hidden suite wins.",
+    proof: "BREAKER vs HOUSE · async-race · Fireworks / NVIDIA",
   },
   {
-    n: "3",
-    title: "Cinema Detect",
-    body: "Full-screen race. Kill feed in the middle. Ends with a slam IT LIED / CLEARED card you will send to the group chat.",
-    accent: "text-fixer",
-    demo: [
-      "cinema · live clock",
-      "00:31 FIXER writes patch",
-      "SLAM → IT LIED",
-    ],
+    id: "slam",
+    title: "Cinema Detect ends with a card you will share.",
+    body: "Full-screen kill feed. Then a slam: IT LIED or CLEARED. Drop it in Discord / Twitter. The loop is the product.",
+    proof: "IT LIED · open /lie/[id]",
   },
   {
-    n: "4",
-    title: "Share · export",
-    body: "Open the lie card, copy the Prompt Pack into Cursor or Claude Code, revise from the deciding call, detect again.",
-    accent: "text-verdict",
-    demo: [
-      "share → /lie/[id]",
-      "export → .cursor/rules/itlied.md",
-      "VERDICT · pack ready",
-    ],
+    id: "export",
+    title: "Export only what clears.",
+    body: "Copy a Cursor .mdc or CLAUDE.md block with the deciding call. Revise from the failure. Prove again tomorrow.",
+    proof: "Prompt Pack → .cursor/rules/itlied.mdc",
   },
 ] as const;
 
 export function HowItWorks() {
-  const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
-  const step = STEPS[active];
+  const beat = BEATS[active];
 
   return (
     <section id="how" className="border-t border-rule">
       <div className="page-shell-wide py-[var(--space-7)] md:py-[var(--space-8)]">
         <header className="mb-[var(--space-6)] max-w-[36rem]">
-          <h2 className="type-title text-ink">How a match works</h2>
+          <h2 className="type-title text-ink">
+            Built for people who ship agent rules
+          </h2>
           <p className="font-body mt-[var(--space-3)] text-[var(--text-body-sm)] text-muted">
-            Tap a step. Watching the deciding call beats a rank with no reason.
+            Not another model leaderboard. A lie detector for the prompts you
+            already paste into Cursor and Claude Code.
           </p>
         </header>
 
-        <div className="grid gap-0 border-y border-rule lg:grid-cols-[1fr_1.05fr] lg:border">
-          <ol className="divide-y divide-rule">
-            {STEPS.map((s, i) => {
+        <div className="grid gap-[var(--space-6)] lg:grid-cols-[1fr_1.1fr] lg:gap-[var(--space-7)]">
+          <ol className="flex flex-col gap-[var(--space-2)]">
+            {BEATS.map((b, i) => {
               const on = i === active;
               return (
-                <li key={s.n}>
+                <li key={b.id}>
                   <button
                     type="button"
                     onClick={() => setActive(i)}
-                    className={`pressable touch-target w-full px-[var(--space-4)] py-[var(--space-4)] text-left md:px-[var(--space-5)] ${
-                      on ? "bg-panel" : "bg-transparent"
+                    className={`pressable touch-target w-full border px-[var(--space-4)] py-[var(--space-4)] text-left transition-colors ${
+                      on
+                        ? "border-breaker/40 bg-breaker/5"
+                        : "border-transparent hover:border-rule"
                     }`}
-                    aria-current={on ? "step" : undefined}
+                    aria-current={on ? "true" : undefined}
                   >
-                    <div className="flex items-baseline gap-[var(--space-3)]">
-                      <span
-                        className={`type-meta ${on ? s.accent : "text-muted"}`}
-                      >
-                        {s.n}
-                      </span>
-                      <h3
-                        className={`font-display text-[1.0625rem] tracking-[-0.02em] md:text-[1.1875rem] ${
-                          on ? "text-ink" : "text-muted"
-                        }`}
-                      >
-                        {s.title}
-                      </h3>
-                    </div>
-                    <AnimatePresence initial={false}>
-                      {on && (
-                        <motion.p
-                          initial={
-                            reduce ? false : { opacity: 0, transform: "translateY(4px)" }
-                          }
-                          animate={{ opacity: 1, transform: "translateY(0px)" }}
-                          exit={{ opacity: 0, transform: "translateY(-2px)" }}
-                          transition={reduce ? { duration: 0.12 } : spring}
-                          className="font-body max-w-[40ch] pt-[var(--space-3)] text-[var(--text-body-sm)] text-muted"
-                        >
-                          {s.body}
-                        </motion.p>
-                      )}
-                    </AnimatePresence>
+                    <p
+                      className={`font-display text-[1.125rem] tracking-[-0.02em] md:text-[1.25rem] ${
+                        on ? "text-ink" : "text-muted"
+                      }`}
+                    >
+                      {b.title}
+                    </p>
+                    {on && (
+                      <p className="font-body mt-[var(--space-2)] max-w-[42ch] text-[var(--text-body-sm)] text-muted">
+                        {b.body}
+                      </p>
+                    )}
                   </button>
                 </li>
               );
             })}
           </ol>
 
-          <div className="border-t border-rule bg-panel p-[var(--space-4)] md:p-[var(--space-5)] lg:border-l lg:border-t-0">
-            <div className="mb-[var(--space-3)] flex items-center justify-between type-meta text-muted">
-              <span>sample</span>
-              <span className={step.accent}>{step.n}</span>
+          <aside className="flex flex-col justify-between border border-rule bg-panel p-[var(--space-5)]">
+            <div>
+              <p className="type-meta text-muted">what you get</p>
+              <p className="font-display mt-[var(--space-3)] text-[clamp(1.75rem,5vw,2.25rem)] leading-[1.05] tracking-[-0.03em] text-ink">
+                {beat.title}
+              </p>
+              <p className="font-body mt-[var(--space-4)] max-w-[36ch] text-[var(--text-body-sm)] text-muted">
+                {beat.body}
+              </p>
+              <pre className="mt-[var(--space-5)] overflow-x-auto border border-rule bg-base px-[var(--space-3)] py-[var(--space-3)] font-mono text-[0.8125rem] leading-relaxed text-breaker">
+                {beat.proof}
+              </pre>
             </div>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.pre
-                key={step.n}
-                initial={
-                  reduce ? false : { opacity: 0, transform: "translateY(6px)" }
-                }
-                animate={{ opacity: 1, transform: "translateY(0px)" }}
-                exit={{ opacity: 0, transform: "translateY(-4px)" }}
-                transition={reduce ? { duration: 0.12 } : springSnappy}
-                className="overflow-x-auto border border-rule bg-base p-[var(--space-3)] font-mono text-[0.8125rem] leading-6 text-ink"
-              >
-                {step.demo.map((line) => (
-                  <div key={line}>
-                    <span className="text-muted">› </span>
-                    <span
-                      className={
-                        line.includes("TAMPER") || line.startsWith("-")
-                          ? "text-verdict"
-                          : line.includes("FIXER") || line.includes("green")
-                            ? "text-fixer"
-                            : line.includes("BREAKER")
-                              ? "text-breaker"
-                              : undefined
-                      }
-                    >
-                      {line}
-                    </span>
-                  </div>
-                ))}
-              </motion.pre>
-            </AnimatePresence>
-            <p className="type-meta mt-[var(--space-3)] text-muted">
+
+            <div className="mt-[var(--space-6)] flex flex-col gap-[var(--space-3)] sm:flex-row sm:items-center">
               <a
-                href="/cinema/demo"
-                className="text-breaker underline-offset-2 hover:underline"
+                href="/#play"
+                className="pressable touch-target inline-flex items-center justify-center border border-breaker/50 bg-breaker/10 px-[var(--space-5)] py-[0.875rem] font-mono text-[0.8125rem] font-medium uppercase tracking-[0.14em] text-breaker hover:bg-breaker/20"
               >
-                open cinema demo →
+                paste rules · detect
               </a>
-            </p>
-          </div>
+              <Link
+                href="/cinema/demo"
+                className="pressable touch-target inline-flex items-center justify-center type-meta text-muted hover:text-ink"
+              >
+                watch a tamper in 6s →
+              </Link>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
