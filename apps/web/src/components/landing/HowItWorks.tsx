@@ -8,7 +8,7 @@ const springSnappy = { type: "spring" as const, bounce: 0, duration: 0.28 };
 
 const STEPS = [
   {
-    n: "01",
+    n: "1",
     title: "Drop your rules",
     body: "Paste a system prompt, Cursor rule, or GitHub URL. Same model, same tools — we catch lies, not vibes.",
     accent: "text-ink",
@@ -19,7 +19,7 @@ const STEPS = [
     ],
   },
   {
-    n: "02",
+    n: "2",
     title: "Race on a hidden suite",
     body: "Two sandboxed agents race a real bug. Visible tests are in the container. A hidden suite is not — faking green is TAMPERED.",
     accent: "text-breaker",
@@ -30,7 +30,7 @@ const STEPS = [
     ],
   },
   {
-    n: "03",
+    n: "3",
     title: "Cinema Detect",
     body: "Full-screen race. Kill feed in the middle. Ends with a slam IT LIED / CLEARED card you will send to the group chat.",
     accent: "text-fixer",
@@ -41,7 +41,7 @@ const STEPS = [
     ],
   },
   {
-    n: "04",
+    n: "4",
     title: "Share · export",
     body: "Open the lie card, copy the Prompt Pack into Cursor or Claude Code, revise from the deciding call, detect again.",
     accent: "text-verdict",
@@ -59,23 +59,16 @@ export function HowItWorks() {
   const step = STEPS[active];
 
   return (
-    <section id="how" className="border-t border-rule bg-base">
-      <div className="mx-auto max-w-5xl px-4 py-12 md:py-16">
-        <div className="mb-8 flex flex-col gap-2 border-b border-rule pb-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h2 className="font-display text-2xl font-extrabold tracking-[-0.045em] text-ink md:text-3xl">
-              How a match works
-            </h2>
-            <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-              protocol · four steps
-            </p>
-          </div>
-          <p className="max-w-md font-body text-sm text-muted md:text-right">
-            Click a step. Fifteen seconds of watching beats a rank with no reason.
+    <section id="how" className="border-t border-rule">
+      <div className="page-shell-wide py-[var(--space-7)] md:py-[var(--space-8)]">
+        <header className="mb-[var(--space-6)] max-w-[36rem]">
+          <h2 className="type-title text-ink">How a match works</h2>
+          <p className="font-body mt-[var(--space-3)] text-[var(--text-body-sm)] text-muted">
+            Tap a step. Watching the deciding call beats a rank with no reason.
           </p>
-        </div>
+        </header>
 
-        <div className="grid gap-0 border border-rule lg:grid-cols-[1fr_1.1fr]">
+        <div className="grid gap-0 border-y border-rule lg:grid-cols-[1fr_1.05fr] lg:border">
           <ol className="divide-y divide-rule">
             {STEPS.map((s, i) => {
               const on = i === active;
@@ -84,17 +77,19 @@ export function HowItWorks() {
                   <button
                     type="button"
                     onClick={() => setActive(i)}
-                    className={`pressable w-full px-4 py-4 text-left md:px-5 ${
-                      on ? "bg-panel" : "bg-base"
+                    className={`pressable touch-target w-full px-[var(--space-4)] py-[var(--space-4)] text-left md:px-[var(--space-5)] ${
+                      on ? "bg-panel" : "bg-transparent"
                     }`}
                     aria-current={on ? "step" : undefined}
                   >
-                    <div className="flex items-baseline gap-3">
-                      <span className={`font-mono text-[12px] ${on ? s.accent : "text-muted"}`}>
+                    <div className="flex items-baseline gap-[var(--space-3)]">
+                      <span
+                        className={`type-meta ${on ? s.accent : "text-muted"}`}
+                      >
                         {s.n}
                       </span>
                       <h3
-                        className={`font-display text-base font-bold tracking-[-0.02em] md:text-lg ${
+                        className={`font-display text-[1.0625rem] tracking-[-0.02em] md:text-[1.1875rem] ${
                           on ? "text-ink" : "text-muted"
                         }`}
                       >
@@ -104,11 +99,13 @@ export function HowItWorks() {
                     <AnimatePresence initial={false}>
                       {on && (
                         <motion.p
-                          initial={reduce ? false : { opacity: 0, transform: "translateY(4px)" }}
+                          initial={
+                            reduce ? false : { opacity: 0, transform: "translateY(4px)" }
+                          }
                           animate={{ opacity: 1, transform: "translateY(0px)" }}
                           exit={{ opacity: 0, transform: "translateY(-2px)" }}
                           transition={reduce ? { duration: 0.12 } : spring}
-                          className="pt-3 font-body text-[14px] leading-relaxed text-muted"
+                          className="font-body max-w-[40ch] pt-[var(--space-3)] text-[var(--text-body-sm)] text-muted"
                         >
                           {s.body}
                         </motion.p>
@@ -120,19 +117,21 @@ export function HowItWorks() {
             })}
           </ol>
 
-          <div className="border-t border-rule bg-panel p-4 md:p-6 lg:border-l lg:border-t-0">
-            <div className="mb-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
+          <div className="border-t border-rule bg-panel p-[var(--space-4)] md:p-[var(--space-5)] lg:border-l lg:border-t-0">
+            <div className="mb-[var(--space-3)] flex items-center justify-between type-meta text-muted">
               <span>sample</span>
               <span className={step.accent}>{step.n}</span>
             </div>
             <AnimatePresence mode="wait" initial={false}>
               <motion.pre
                 key={step.n}
-                initial={reduce ? false : { opacity: 0, transform: "translateY(6px)" }}
+                initial={
+                  reduce ? false : { opacity: 0, transform: "translateY(6px)" }
+                }
                 animate={{ opacity: 1, transform: "translateY(0px)" }}
                 exit={{ opacity: 0, transform: "translateY(-4px)" }}
                 transition={reduce ? { duration: 0.12 } : springSnappy}
-                className="overflow-x-auto border border-rule bg-base p-3 font-mono text-[12px] leading-6 text-ink"
+                className="overflow-x-auto border border-rule bg-base p-[var(--space-3)] font-mono text-[0.8125rem] leading-6 text-ink"
               >
                 {step.demo.map((line) => (
                   <div key={line}>
@@ -154,30 +153,13 @@ export function HowItWorks() {
                 ))}
               </motion.pre>
             </AnimatePresence>
-            <p className="mt-3 font-mono text-[11px] text-muted">
-              Try a dry run in{" "}
-              <a href="#demo" className="text-breaker underline-offset-2 hover:underline">
-                the sandbox ↓
+            <p className="type-meta mt-[var(--space-3)] text-muted">
+              <a
+                href="/cinema/demo"
+                className="text-breaker underline-offset-2 hover:underline"
+              >
+                open cinema demo →
               </a>
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-0 border border-rule font-mono text-[12px] text-muted md:grid-cols-3">
-          <div className="border-b border-rule p-4 md:border-b-0 md:border-r">
-            <div className="text-[10px] uppercase tracking-[0.18em]">sandbox</div>
-            <p className="mt-2 text-ink">
-              Fresh Docker per agent. Network none. Non-root. Keys never enter the container.
-            </p>
-          </div>
-          <div className="border-b border-rule p-4 md:border-b-0 md:border-r">
-            <div className="text-[10px] uppercase tracking-[0.18em]">limits</div>
-            <p className="mt-2 text-ink">300s · 40 tool calls · 80k tokens · capped CPU/RAM</p>
-          </div>
-          <div className="p-4">
-            <div className="text-[10px] uppercase tracking-[0.18em]">reveal</div>
-            <p className="mt-2 text-ink">
-              Prompt private until the match ends — then public with the archive.
             </p>
           </div>
         </div>

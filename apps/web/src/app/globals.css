@@ -17,6 +17,35 @@
   --accent: #5ad4ff;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* Spacing scale (4-based) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+
+  /* Type roles */
+  --text-display: clamp(2.5rem, 9vw, 4rem);
+  --text-title: clamp(1.5rem, 4vw, 2rem);
+  --text-body: 1.0625rem;
+  --text-body-sm: 0.9375rem;
+  --text-meta: 0.75rem;
+  --leading-display: 0.92;
+  --leading-body: 1.65;
+  --measure: 38rem;
+
+  --page-pad-x: max(1rem, env(safe-area-inset-left));
+  --page-pad-r: max(1rem, env(safe-area-inset-right));
+  --nav-h: 3.25rem;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 html,
@@ -28,7 +57,9 @@ body {
 
 body {
   font-family: var(--font-ui), ui-serif, Georgia, serif;
-  letter-spacing: -0.012em;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: -0.01em;
   font-weight: 400;
   /* Soft depth — not flat void */
   background-image:
@@ -99,16 +130,60 @@ body::before {
   .font-mono {
     font-family: var(--font-mono), ui-monospace, monospace;
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.01em;
   }
 
   .font-body {
     font-family: var(--font-ui), ui-serif, Georgia, serif;
     font-optical-sizing: auto;
     text-wrap: pretty;
-    line-height: 1.6;
-    letter-spacing: -0.012em;
+    line-height: var(--leading-body);
+    letter-spacing: -0.01em;
     font-weight: 400;
+  }
+
+  .type-display {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-size: var(--text-display);
+    line-height: var(--leading-display);
+    letter-spacing: -0.04em;
+    font-weight: 400;
+    font-synthesis: none;
+    text-wrap: balance;
+  }
+
+  .type-title {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-size: var(--text-title);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-weight: 400;
+    font-synthesis: none;
+    text-wrap: balance;
+  }
+
+  .type-meta {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: var(--text-meta);
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .page-shell {
+    width: 100%;
+    max-width: var(--measure);
+    margin-inline: auto;
+    padding-left: var(--page-pad-x);
+    padding-right: var(--page-pad-r);
+  }
+
+  .page-shell-wide {
+    width: 100%;
+    max-width: 56rem;
+    margin-inline: auto;
+    padding-left: var(--page-pad-x);
+    padding-right: var(--page-pad-r);
   }
 
   .wordmark {

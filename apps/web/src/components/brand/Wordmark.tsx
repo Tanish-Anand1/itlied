@@ -8,12 +8,12 @@ export function Wordmark({
 }) {
   const sizeClass =
     size === "hero"
-      ? "text-[3rem] md:text-[4.5rem]"
+      ? "text-[clamp(2.25rem,10vw,4.25rem)]"
       : size === "lg"
-        ? "text-3xl md:text-[2.75rem]"
+        ? "text-[clamp(1.75rem,5vw,2.75rem)]"
         : size === "sm"
-          ? "text-xl md:text-2xl"
-          : "text-2xl md:text-3xl";
+          ? "text-[1.25rem] md:text-[1.5rem]"
+          : "text-[1.5rem] md:text-[1.875rem]";
 
   return (
     <span className={`wordmark inline-flex items-baseline gap-[0.06em] ${sizeClass} ${className}`}>

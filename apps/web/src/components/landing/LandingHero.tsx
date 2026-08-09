@@ -118,30 +118,36 @@ export function LandingHero({
 
   return (
     <section id="play" className="relative border-b border-rule">
-      <div className="mx-auto flex min-h-[calc(100dvh-3.25rem)] max-w-3xl flex-col justify-center px-4 py-10 md:py-16">
-        <div className="mb-8 md:mb-10">
+      <div className="page-shell flex min-h-[calc(100dvh-var(--nav-h))] flex-col justify-center py-[var(--space-7)] pb-[max(var(--space-7),env(safe-area-inset-bottom))] md:py-[var(--space-8)]">
+        {/* Brand → claim → one line */}
+        <header className="mb-[var(--space-6)] md:mb-[var(--space-7)]">
           <Wordmark size="hero" />
-          <h1 className="mt-4 max-w-xl font-display text-[clamp(2.25rem,8vw,3.75rem)] leading-[0.92] tracking-[-0.04em] text-ink">
+          <h1 className="type-display mt-[var(--space-4)] max-w-[12ch] text-ink">
             Catch the lie.
           </h1>
-          <p className="mt-3 max-w-md font-body text-base text-muted md:text-lg">
+          <p className="font-body mt-[var(--space-4)] max-w-[32ch] text-[var(--text-body)] text-muted md:max-w-[40ch]">
             Drop your agent rules. Race the house. Share IT LIED or CLEARED.
           </p>
           {dailyLabel && (
-            <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+            <p className="type-meta mt-[var(--space-4)] text-muted">
               {dailyLabel}
             </p>
           )}
-        </div>
+        </header>
 
         {reviseNote && (
-          <p className="mb-4 font-mono text-[12px] text-verdict">
+          <p className="type-meta mb-[var(--space-4)] text-verdict">
             last call · {reviseNote}
           </p>
         )}
 
-        <div className="border-b border-t border-rule">
+        {/* Command surface — one composition */}
+        <div className="flex flex-col">
+          <label className="sr-only" htmlFor="system-prompt">
+            System prompt
+          </label>
           <textarea
+            id="system-prompt"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyDown={(e) => {
@@ -150,26 +156,26 @@ export function LandingHero({
                 submit();
               }
             }}
-            rows={8}
+            rows={7}
             placeholder="Paste your system prompt or Cursor rules…"
-            className="w-full resize-y bg-transparent py-4 font-mono text-[14px] leading-relaxed text-ink placeholder:text-muted/70 focus:outline-none md:min-h-[200px]"
+            className="w-full resize-y border-y border-rule bg-transparent py-[var(--space-5)] font-mono text-[0.9375rem] leading-[1.55] text-ink placeholder:text-muted/65 focus:outline-none md:min-h-[12rem] md:text-[0.9375rem]"
             spellCheck={false}
           />
 
-          <div className="flex flex-col gap-3 border-t border-rule py-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-muted">
+          <div className="flex flex-col gap-[var(--space-4)] py-[var(--space-4)] sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-x-[var(--space-4)] gap-y-[var(--space-2)] type-meta text-muted">
               <button
                 type="button"
                 onClick={() => setShowDrop((v) => !v)}
-                className="pressable hover:text-ink"
+                className="pressable touch-target inline-flex items-center hover:text-ink"
               >
-                {showDrop ? "hide import" : "import file / url"}
+                {showDrop ? "hide import" : "import"}
               </button>
               {!prompt && (
                 <button
                   type="button"
                   onClick={() => setPrompt(SAMPLE)}
-                  className="pressable text-breaker hover:underline"
+                  className="pressable touch-target inline-flex items-center text-breaker hover:underline"
                 >
                   sample
                 </button>
@@ -177,11 +183,14 @@ export function LandingHero({
               <button
                 type="button"
                 onClick={() => setShowOptions((v) => !v)}
-                className="pressable hover:text-ink"
+                className="pressable touch-target inline-flex items-center hover:text-ink"
               >
                 {showOptions ? "hide options" : "options"}
               </button>
-              <span className={ready ? "text-fixer" : undefined}>
+              <span
+                className={ready ? "text-fixer" : undefined}
+                aria-live="polite"
+              >
                 {prompt.trim().length}/20
               </span>
             </div>
@@ -191,7 +200,7 @@ export function LandingHero({
               disabled={pending || !ready}
               onClick={submit}
               aria-busy={pending}
-              className="pressable touch-target w-full border border-breaker/50 bg-breaker/10 px-6 py-3 font-mono text-[13px] font-semibold uppercase tracking-[0.18em] text-breaker enabled:hover:bg-breaker/20 disabled:cursor-not-allowed disabled:opacity-35 sm:w-auto"
+              className="pressable touch-target w-full border border-breaker/50 bg-breaker/10 px-[var(--space-6)] py-[0.875rem] font-mono text-[0.8125rem] font-medium uppercase tracking-[0.16em] text-breaker enabled:hover:bg-breaker/20 disabled:cursor-not-allowed disabled:opacity-35 sm:w-auto sm:min-w-[8.5rem]"
             >
               {pending ? "…" : "detect"}
             </button>
@@ -199,7 +208,7 @@ export function LandingHero({
         </div>
 
         {showDrop && (
-          <div className="mt-3">
+          <div className="mt-[var(--space-2)]">
             <RulesDrop
               onRules={(body) => {
                 setPrompt(body);
@@ -210,85 +219,106 @@ export function LandingHero({
         )}
 
         {showOptions && (
-          <div className="mt-3 grid gap-2 border border-rule font-mono text-[12px] sm:grid-cols-3">
-            <label className="flex flex-col gap-1 px-3 py-2">
-              <span className="text-[10px] uppercase tracking-[0.14em] text-muted">
-                fixture
-              </span>
-              <select
-                value={fixtureId}
-                onChange={(e) => setFixtureId(e.target.value)}
-                className="bg-transparent text-ink focus:outline-none"
+          <div className="mt-[var(--space-3)] grid gap-0 border border-rule sm:grid-cols-3">
+            {(
+              [
+                {
+                  label: "fixture",
+                  value: fixtureId,
+                  onChange: setFixtureId,
+                  options: FIXTURE_CATALOG.map((f) => ({
+                    id: f.id,
+                    label: f.name,
+                  })),
+                },
+                {
+                  label: "model",
+                  value: modelId,
+                  onChange: setModelId,
+                  options: MODEL_ALLOWLIST.filter((m) => m.enabled).map((m) => ({
+                    id: m.id,
+                    label: m.label,
+                  })),
+                },
+                {
+                  label: "format",
+                  value: format,
+                  onChange: (v: string) => setFormat(v as MatchFormat),
+                  options: [
+                    { id: "race_symmetric", label: "symmetric" },
+                    { id: "race_asymmetric", label: "asymmetric" },
+                  ],
+                },
+              ] as const
+            ).map((field, i) => (
+              <label
+                key={field.label}
+                className={`flex flex-col gap-[var(--space-1)] px-[var(--space-4)] py-[var(--space-3)] ${
+                  i > 0 ? "border-t border-rule sm:border-l sm:border-t-0" : ""
+                }`}
               >
-                {FIXTURE_CATALOG.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="flex flex-col gap-1 border-t border-rule px-3 py-2 sm:border-l sm:border-t-0">
-              <span className="text-[10px] uppercase tracking-[0.14em] text-muted">
-                model
-              </span>
-              <select
-                value={modelId}
-                onChange={(e) => setModelId(e.target.value)}
-                className="bg-transparent text-ink focus:outline-none"
-              >
-                {MODEL_ALLOWLIST.filter((m) => m.enabled).map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="flex flex-col gap-1 border-t border-rule px-3 py-2 sm:border-l sm:border-t-0">
-              <span className="text-[10px] uppercase tracking-[0.14em] text-muted">
-                format
-              </span>
-              <select
-                value={format}
-                onChange={(e) => setFormat(e.target.value as MatchFormat)}
-                className="bg-transparent text-ink focus:outline-none"
-              >
-                <option value="race_symmetric">symmetric</option>
-                <option value="race_asymmetric">asymmetric</option>
-              </select>
-            </label>
+                <span className="type-meta text-muted">{field.label}</span>
+                <select
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  className="bg-transparent font-mono text-[0.875rem] text-ink focus:outline-none"
+                >
+                  {field.options.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
           </div>
         )}
 
         {error && (
-          <p className="mt-4 font-mono text-[12px] text-breaker" role="alert">
+          <p
+            className="mt-[var(--space-4)] font-mono text-[0.8125rem] leading-snug text-breaker"
+            role="alert"
+          >
             {error}{" "}
             {!signedIn && !demoMode && (
-              <Link href="/login" className="underline">
+              <Link href="/login" className="underline underline-offset-2">
                 sign in
               </Link>
             )}
           </p>
         )}
 
-        <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[12px] text-muted">
-          <Link href="/cinema/demo" className="pressable text-breaker hover:text-ink">
-            watch demo →
+        <nav
+          aria-label="Secondary"
+          className="mt-[var(--space-6)] flex flex-wrap items-center gap-x-[var(--space-5)] gap-y-[var(--space-3)] type-meta text-muted"
+        >
+          <Link
+            href="/cinema/demo"
+            className="pressable touch-target inline-flex items-center text-breaker hover:text-ink"
+          >
+            watch demo
           </Link>
           {!signedIn && (
-            <Link href="/login" className="pressable hover:text-ink">
+            <Link
+              href="/login"
+              className="pressable touch-target inline-flex items-center hover:text-ink"
+            >
               sign in
             </Link>
           )}
-          <a href="#how" className="pressable hover:text-ink">
+          <a
+            href="#how"
+            className="pressable touch-target inline-flex items-center hover:text-ink"
+          >
             how it works
           </a>
           {tamperCount > 0 && (
             <span className="text-muted/80">
-              <span className="text-verdict">{tamperCount}</span> tampers
+              <span className="text-verdict">{tamperCount}</span>
               {perHour > 0 ? ` · ${perHour}/hr` : ""}
             </span>
           )}
-        </div>
+        </nav>
       </div>
     </section>
   );

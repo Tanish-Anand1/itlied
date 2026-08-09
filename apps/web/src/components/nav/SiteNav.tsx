@@ -9,39 +9,62 @@ export async function SiteNav() {
     (profile as { handle?: string } | null)?.handle ?? "you";
 
   return (
-    <nav className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-rule bg-base/75 px-4 py-2.5 backdrop-blur-xl backdrop-saturate-150">
-      <Link href="/" className="shrink-0">
-        <Wordmark size="sm" />
-      </Link>
-      <div className="flex items-center gap-4 font-mono text-[12px] text-muted">
-        <a href="/#play" className="hidden text-verdict hover:text-ink sm:inline">
-          detect
-        </a>
-        <Link href="/cinema/demo" className="hover:text-ink">
-          demo
+    <nav className="sticky top-0 z-40 border-b border-rule bg-base/80 backdrop-blur-xl backdrop-saturate-150">
+      <div className="flex h-[var(--nav-h)] items-center justify-between gap-[var(--space-4)] px-[var(--page-pad-x)] pr-[var(--page-pad-r)] pt-[env(safe-area-inset-top)]">
+        <Link href="/" className="shrink-0">
+          <Wordmark size="sm" />
         </Link>
-        <Link href="/ladder" className="hidden hover:text-ink sm:inline">
-          ladder
-        </Link>
-        {user ? (
-          <>
-            <Link href="/me" className="hidden hover:text-ink md:inline">
-              daily
-            </Link>
-            {(profile as { role?: string } | null)?.role === "ops" && (
-              <Link href="/ops" className="text-verdict hover:text-ink">
-                ops
-              </Link>
-            )}
-            <Link href="/settings" className="text-breaker hover:text-ink">
-              @{handle}
-            </Link>
-          </>
-        ) : (
-          <Link href="/login" className="text-breaker hover:text-ink">
-            sign in
+        <div className="flex items-center gap-[var(--space-4)] type-meta text-muted sm:gap-[var(--space-5)]">
+          <a
+            href="/#play"
+            className="hidden touch-target items-center text-verdict hover:text-ink sm:inline-flex"
+          >
+            detect
+          </a>
+          <Link
+            href="/cinema/demo"
+            className="touch-target inline-flex items-center hover:text-ink"
+          >
+            demo
           </Link>
-        )}
+          <Link
+            href="/ladder"
+            className="hidden touch-target items-center hover:text-ink md:inline-flex"
+          >
+            ladder
+          </Link>
+          {user ? (
+            <>
+              <Link
+                href="/me"
+                className="hidden touch-target items-center hover:text-ink md:inline-flex"
+              >
+                daily
+              </Link>
+              {(profile as { role?: string } | null)?.role === "ops" && (
+                <Link
+                  href="/ops"
+                  className="touch-target inline-flex items-center text-verdict hover:text-ink"
+                >
+                  ops
+                </Link>
+              )}
+              <Link
+                href="/settings"
+                className="touch-target inline-flex max-w-[9rem] items-center truncate text-breaker hover:text-ink"
+              >
+                @{handle}
+              </Link>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="touch-target inline-flex items-center text-breaker hover:text-ink"
+            >
+              sign in
+            </Link>
+          )}
+        </div>
       </div>
     </nav>
   );

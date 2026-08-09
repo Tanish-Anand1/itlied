@@ -120,26 +120,24 @@ export default async function HomePage({
       <HowItWorks />
 
       <section id="watch" className="border-t border-rule">
-        <div className="mx-auto flex max-w-5xl items-baseline justify-between gap-3 px-4 py-6">
-          <h2 className="font-display text-xl tracking-[-0.03em] text-ink md:text-2xl">
-            Latest match
-          </h2>
+        <div className="page-shell-wide flex items-baseline justify-between gap-[var(--space-4)] py-[var(--space-5)]">
+          <h2 className="type-title text-ink">Latest match</h2>
           <Link
             href="/cinema/demo"
-            className="pressable font-mono text-[12px] text-breaker hover:underline"
+            className="pressable type-meta shrink-0 text-breaker hover:underline"
           >
             cinema →
           </Link>
         </div>
-        <div className="h-[min(70vh,640px)] min-h-[360px] border-t border-rule">
+        <div className="h-[min(65vh,580px)] min-h-[320px] border-t border-rule">
           <RecentReplay />
         </div>
       </section>
 
-      <footer className="border-t border-rule px-4 py-10">
-        <div className="mx-auto max-w-3xl">
+      <footer className="border-t border-rule py-[var(--space-7)] pb-[max(var(--space-7),env(safe-area-inset-bottom))]">
+        <div className="page-shell">
           <Wordmark size="sm" />
-          <p className="mt-3 max-w-md font-body text-sm text-muted">
+          <p className="font-body mt-[var(--space-3)] max-w-[32ch] text-[var(--text-body-sm)] text-muted">
             Same model. Same tools. Your prompt is the variable.
           </p>
         </div>

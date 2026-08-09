@@ -180,44 +180,42 @@ function LoginForm() {
   const showGithub = Boolean(status?.github);
 
   return (
-    <div className="w-full max-w-sm">
-      <h1 className="font-display text-[clamp(2.5rem,10vw,3.25rem)] leading-none tracking-[-0.04em] text-ink">
-        Sign in
-      </h1>
-      <p className="mt-2 font-body text-sm text-muted">
+    <div className="w-full max-w-[22rem]">
+      <h1 className="type-display text-ink">Sign in</h1>
+      <p className="font-body mt-[var(--space-4)] max-w-[28ch] text-[var(--text-body-sm)] text-muted">
         Needed to run a live detect.{" "}
-        <Link href="/cinema/demo" className="text-breaker hover:underline">
+        <Link
+          href="/cinema/demo"
+          className="text-breaker underline-offset-2 hover:underline"
+        >
           Watch the demo
         </Link>{" "}
         without an account.
       </p>
 
-      <div className="mt-8 space-y-4">
+      <div className="mt-[var(--space-7)] flex flex-col gap-[var(--space-5)]">
         <label className="block">
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-            email
-          </span>
+          <span className="type-meta text-muted">email</span>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
-            className="mt-2 w-full border-b border-rule bg-transparent py-3 font-mono text-[15px] text-ink outline-none focus:border-breaker"
+            inputMode="email"
+            className="mt-[var(--space-2)] w-full border-b border-rule bg-transparent py-[0.875rem] font-mono text-[1rem] text-ink outline-none focus:border-breaker"
             placeholder="you@example.com"
           />
         </label>
 
         {usePassword && (
           <label className="block">
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-              password
-            </span>
+            <span className="type-meta text-muted">password</span>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
-              className="mt-2 w-full border-b border-rule bg-transparent py-3 font-mono text-[15px] text-ink outline-none focus:border-breaker"
+              className="mt-[var(--space-2)] w-full border-b border-rule bg-transparent py-[0.875rem] font-mono text-[1rem] text-ink outline-none focus:border-breaker"
               placeholder="••••••••"
             />
           </label>
@@ -228,17 +226,17 @@ function LoginForm() {
             type="button"
             disabled={pending || email.trim().length < 3}
             onClick={magicLink}
-            className="pressable touch-target w-full border border-breaker/40 bg-breaker/10 px-4 py-3.5 font-mono text-[12px] uppercase tracking-[0.16em] text-breaker disabled:opacity-40"
+            className="pressable touch-target w-full border border-breaker/40 bg-breaker/10 px-[var(--space-4)] py-[0.9375rem] font-mono text-[0.8125rem] font-medium uppercase tracking-[0.14em] text-breaker disabled:opacity-40"
           >
             {pending ? "sending…" : "send magic link"}
           </button>
         ) : (
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-[var(--space-2)]">
             <button
               type="button"
               disabled={pending || email.trim().length < 3}
               onClick={() => passwordAuth("signin")}
-              className="pressable touch-target border border-breaker/40 bg-breaker/10 px-3 py-3.5 font-mono text-[11px] uppercase tracking-[0.14em] text-breaker disabled:opacity-40"
+              className="pressable touch-target border border-breaker/40 bg-breaker/10 px-[var(--space-3)] py-[0.9375rem] font-mono text-[0.75rem] uppercase tracking-[0.12em] text-breaker disabled:opacity-40"
             >
               sign in
             </button>
@@ -246,7 +244,7 @@ function LoginForm() {
               type="button"
               disabled={pending || email.trim().length < 3}
               onClick={() => passwordAuth("signup")}
-              className="pressable touch-target border border-rule px-3 py-3.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink hover:border-breaker/40 disabled:opacity-40"
+              className="pressable touch-target border border-rule px-[var(--space-3)] py-[0.9375rem] font-mono text-[0.75rem] uppercase tracking-[0.12em] text-ink hover:border-breaker/40 disabled:opacity-40"
             >
               create
             </button>
@@ -256,19 +254,19 @@ function LoginForm() {
         <button
           type="button"
           onClick={() => setUsePassword((v) => !v)}
-          className="pressable font-mono text-[11px] text-muted hover:text-ink"
+          className="pressable touch-target self-start type-meta text-muted hover:text-ink"
         >
           {usePassword ? "use magic link instead" : "use password instead"}
         </button>
 
         {(showGoogle || showGithub) && (
-          <div className="space-y-2 pt-2">
+          <div className="flex flex-col gap-[var(--space-2)] pt-[var(--space-2)]">
             {showGoogle && (
               <button
                 type="button"
                 disabled={pending}
                 onClick={() => oauth("google")}
-                className="pressable touch-target w-full border border-rule px-4 py-3 font-mono text-[12px] uppercase tracking-[0.14em] text-ink hover:border-breaker/40"
+                className="pressable touch-target w-full border border-rule px-[var(--space-4)] py-[0.875rem] font-mono text-[0.8125rem] uppercase tracking-[0.12em] text-ink hover:border-breaker/40"
               >
                 continue with google
               </button>
@@ -278,7 +276,7 @@ function LoginForm() {
                 type="button"
                 disabled={pending}
                 onClick={() => oauth("github")}
-                className="pressable touch-target w-full border border-rule px-4 py-3 font-mono text-[12px] uppercase tracking-[0.14em] text-ink hover:border-breaker/40"
+                className="pressable touch-target w-full border border-rule px-[var(--space-4)] py-[0.875rem] font-mono text-[0.8125rem] uppercase tracking-[0.12em] text-ink hover:border-breaker/40"
               >
                 continue with github
               </button>
@@ -291,17 +289,22 @@ function LoginForm() {
             href={status.mailpit}
             target="_blank"
             rel="noreferrer"
-            className="block font-mono text-[11px] text-breaker hover:underline"
+            className="type-meta text-breaker hover:underline"
           >
             open local inbox →
           </a>
         )}
 
         {message && (
-          <p className="font-mono text-[12px] text-fixer">{message}</p>
+          <p className="font-mono text-[0.8125rem] leading-snug text-fixer">
+            {message}
+          </p>
         )}
         {error && (
-          <p className="font-mono text-[12px] text-verdict" role="alert">
+          <p
+            className="font-mono text-[0.8125rem] leading-snug text-verdict"
+            role="alert"
+          >
             {error === "auth_not_configured"
               ? "Auth is not fully configured yet."
               : error}
@@ -314,17 +317,17 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <main className="relative z-[1] min-h-[100dvh] px-4">
-      <div className="mx-auto flex min-h-[100dvh] max-w-lg flex-col">
-        <div className="pt-6">
+    <main className="relative z-[1] min-h-[100dvh]">
+      <div className="page-shell flex min-h-[100dvh] flex-col pb-[env(safe-area-inset-bottom)]">
+        <div className="pt-[max(var(--space-5),env(safe-area-inset-top))]">
           <Link href="/" className="pressable inline-block">
             <Wordmark size="sm" />
           </Link>
         </div>
-        <div className="flex flex-1 flex-col justify-center py-12">
+        <div className="flex flex-1 flex-col justify-center py-[var(--space-7)]">
           <Suspense
             fallback={
-              <p className="font-mono text-[12px] text-muted">loading…</p>
+              <p className="type-meta text-muted">loading…</p>
             }
           >
             <LoginForm />
