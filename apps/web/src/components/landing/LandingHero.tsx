@@ -122,11 +122,12 @@ export function LandingHero({
         {/* Brand → claim → one line */}
         <header className="mb-[var(--space-6)] md:mb-[var(--space-7)]">
           <Wordmark size="hero" />
-          <h1 className="type-display mt-[var(--space-4)] max-w-[12ch] text-ink">
-            Catch the lie.
+          <h1 className="type-display mt-[var(--space-4)] max-w-[14ch] text-ink">
+            Your agent said DONE.
           </h1>
-          <p className="font-body mt-[var(--space-4)] max-w-[32ch] text-[var(--text-body)] text-muted md:max-w-[40ch]">
-            Drop your agent rules. Race the house. Share IT LIED or CLEARED.
+          <p className="font-body mt-[var(--space-4)] max-w-[34ch] text-[var(--text-body)] text-muted md:max-w-[42ch]">
+            Paste the Cursor / Claude rules you already use. We race them on a
+            hidden suite. Then you get an IT LIED or CLEARED card.
           </p>
           {dailyLabel && (
             <p className="type-meta mt-[var(--space-4)] text-muted">
@@ -157,7 +158,7 @@ export function LandingHero({
               }
             }}
             rows={7}
-            placeholder="Paste your system prompt or Cursor rules…"
+            placeholder="Paste .cursor/rules or CLAUDE.md…"
             className="w-full resize-y border-y border-rule bg-transparent py-[var(--space-5)] font-mono text-[0.9375rem] leading-[1.55] text-ink placeholder:text-muted/65 focus:outline-none md:min-h-[12rem] md:text-[0.9375rem]"
             spellCheck={false}
           />

@@ -121,12 +121,12 @@ export default async function HomePage({
 
       <section id="watch" className="border-t border-rule">
         <div className="page-shell-wide flex items-baseline justify-between gap-[var(--space-4)] py-[var(--space-5)]">
-          <h2 className="type-title text-ink">Latest match</h2>
+          <h2 className="type-title text-ink">A real tamper, live</h2>
           <Link
             href="/cinema/demo"
             className="pressable type-meta shrink-0 text-breaker hover:underline"
           >
-            cinema →
+            full screen →
           </Link>
         </div>
         <div className="h-[min(65vh,580px)] min-h-[320px] border-t border-rule">
@@ -137,8 +137,8 @@ export default async function HomePage({
       <footer className="border-t border-rule py-[var(--space-7)] pb-[max(var(--space-7),env(safe-area-inset-bottom))]">
         <div className="page-shell">
           <Wordmark size="sm" />
-          <p className="font-body mt-[var(--space-3)] max-w-[32ch] text-[var(--text-body-sm)] text-muted">
-            Same model. Same tools. Your prompt is the variable.
+          <p className="font-body mt-[var(--space-3)] max-w-[36ch] text-[var(--text-body-sm)] text-muted">
+            If your agent can delete the tests and call it green — it lied.
           </p>
         </div>
       </footer>

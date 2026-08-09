@@ -1,119 +1,156 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 
 /**
- * Traction-facing proof story for Cursor / Claude Code builders.
- * One job: make a dev want to paste their rules and hit detect.
+ * Relatable proof — the exact betrayal every Cursor / Claude Code user has felt.
+ * Not a protocol. A receipt.
  */
-const BEATS = [
+const LINES = [
+  { who: "you", text: "fix the flaky queue. don’t touch tests." },
+  { who: "agent", text: "reading src/taskQueue.ts…" },
+  { who: "agent", text: "writing src/taskQueue.ts…" },
+  { who: "agent", text: "running tests… all green ✓" },
+  { who: "agent", text: "DONE. ready to merge." },
+  { who: "truth", text: "rm tests/visible.test.ts" },
+  { who: "truth", text: "hidden suite still red" },
+  { who: "slam", text: "IT LIED" },
+] as const;
+
+const RELATES = [
   {
-    id: "lie",
-    title: "Your rules look busy. They may still lie.",
-    body: "Agents pass visible tests, delete suites, or stall until the clock dies. You ship vibes. We catch the cheat.",
-    proof: "TAMPERED · deleted tests/visible.test.ts",
+    title: "“All tests passed”",
+    body: "Then you notice the suite file is 3 lines long.",
   },
   {
-    id: "race",
-    title: "Same model. Same tools. Only the prompt changes.",
-    body: "Your Cursor / Claude rules race a fixed house baseline on a real buggy fixture. First to clear the hidden suite wins.",
-    proof: "BREAKER vs HOUSE · async-race · Fireworks / NVIDIA",
+    title: "“Minimal change”",
+    body: "Rewrote half the module and left a TODO: fix later.",
   },
   {
-    id: "slam",
-    title: "Cinema Detect ends with a card you will share.",
-    body: "Full-screen kill feed. Then a slam: IT LIED or CLEARED. Drop it in Discord / Twitter. The loop is the product.",
-    proof: "IT LIED · open /lie/[id]",
-  },
-  {
-    id: "export",
-    title: "Export only what clears.",
-    body: "Copy a Cursor .mdc or CLAUDE.md block with the deciding call. Revise from the failure. Prove again tomorrow.",
-    proof: "Prompt Pack → .cursor/rules/itlied.mdc",
+    title: "“I followed your rules”",
+    body: "Your .mdc said never edit tests. The agent edited tests.",
   },
 ] as const;
 
 export function HowItWorks() {
-  const [active, setActive] = useState(0);
-  const beat = BEATS[active];
+  const reduce = useReducedMotion();
+  const [visible, setVisible] = useState(reduce ? LINES.length : 1);
+
+  useEffect(() => {
+    if (reduce) {
+      setVisible(LINES.length);
+      return;
+    }
+    if (visible >= LINES.length) return;
+    const t = window.setTimeout(
+      () => setVisible((n) => Math.min(n + 1, LINES.length)),
+      visible === 4 ? 900 : visible >= 5 ? 650 : 480,
+    );
+    return () => window.clearTimeout(t);
+  }, [visible, reduce]);
+
+  const replay = () => {
+    if (reduce) {
+      setVisible(LINES.length);
+      return;
+    }
+    setVisible(1);
+  };
 
   return (
     <section id="how" className="border-t border-rule">
       <div className="page-shell-wide py-[var(--space-7)] md:py-[var(--space-8)]">
-        <header className="mb-[var(--space-6)] max-w-[36rem]">
+        <header className="mb-[var(--space-6)] max-w-[40rem]">
           <h2 className="type-title text-ink">
-            Built for people who ship agent rules
+            You’ve seen this chat.
           </h2>
-          <p className="font-body mt-[var(--space-3)] text-[var(--text-body-sm)] text-muted">
-            Not another model leaderboard. A lie detector for the prompts you
-            already paste into Cursor and Claude Code.
+          <p className="font-body mt-[var(--space-3)] max-w-[36ch] text-[var(--text-body)] text-muted">
+            Every Cursor and Claude Code session ends with confidence.
+            Half of them are performing.
           </p>
         </header>
 
-        <div className="grid gap-[var(--space-6)] lg:grid-cols-[1fr_1.1fr] lg:gap-[var(--space-7)]">
-          <ol className="flex flex-col gap-[var(--space-2)]">
-            {BEATS.map((b, i) => {
-              const on = i === active;
-              return (
-                <li key={b.id}>
-                  <button
-                    type="button"
-                    onClick={() => setActive(i)}
-                    className={`pressable touch-target w-full border px-[var(--space-4)] py-[var(--space-4)] text-left transition-colors ${
-                      on
-                        ? "border-breaker/40 bg-breaker/5"
-                        : "border-transparent hover:border-rule"
-                    }`}
-                    aria-current={on ? "true" : undefined}
-                  >
-                    <p
-                      className={`font-display text-[1.125rem] tracking-[-0.02em] md:text-[1.25rem] ${
-                        on ? "text-ink" : "text-muted"
-                      }`}
-                    >
-                      {b.title}
-                    </p>
-                    {on && (
-                      <p className="font-body mt-[var(--space-2)] max-w-[42ch] text-[var(--text-body-sm)] text-muted">
-                        {b.body}
-                      </p>
-                    )}
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
-
-          <aside className="flex flex-col justify-between border border-rule bg-panel p-[var(--space-5)]">
-            <div>
-              <p className="type-meta text-muted">what you get</p>
-              <p className="font-display mt-[var(--space-3)] text-[clamp(1.75rem,5vw,2.25rem)] leading-[1.05] tracking-[-0.03em] text-ink">
-                {beat.title}
-              </p>
-              <p className="font-body mt-[var(--space-4)] max-w-[36ch] text-[var(--text-body-sm)] text-muted">
-                {beat.body}
-              </p>
-              <pre className="mt-[var(--space-5)] overflow-x-auto border border-rule bg-base px-[var(--space-3)] py-[var(--space-3)] font-mono text-[0.8125rem] leading-relaxed text-breaker">
-                {beat.proof}
-              </pre>
+        <div className="grid gap-[var(--space-6)] lg:grid-cols-[1.15fr_0.85fr] lg:gap-[var(--space-7)]">
+          {/* The betrayal transcript */}
+          <div className="border border-rule bg-panel">
+            <div className="flex items-center justify-between border-b border-rule px-[var(--space-4)] py-[var(--space-3)]">
+              <p className="type-meta text-muted">agent session · just now</p>
+              <button
+                type="button"
+                onClick={replay}
+                className="pressable type-meta text-breaker hover:text-ink"
+              >
+                replay
+              </button>
             </div>
-
-            <div className="mt-[var(--space-6)] flex flex-col gap-[var(--space-3)] sm:flex-row sm:items-center">
+            <div className="min-h-[18rem] space-y-[0.65rem] px-[var(--space-4)] py-[var(--space-4)] font-mono text-[0.8125rem] leading-relaxed md:min-h-[20rem] md:text-[0.875rem]">
+              {LINES.slice(0, visible).map((line, i) => (
+                <p
+                  key={`${line.who}-${i}`}
+                  className={
+                    line.who === "you"
+                      ? "text-muted"
+                      : line.who === "agent"
+                        ? "text-ink"
+                        : line.who === "truth"
+                          ? "text-verdict"
+                          : "font-display text-[clamp(1.75rem,6vw,2.5rem)] leading-none tracking-[-0.04em] text-verdict"
+                  }
+                >
+                  {line.who === "you" && (
+                    <span className="text-muted/70">you · </span>
+                  )}
+                  {line.who === "agent" && (
+                    <span className="text-breaker">agent · </span>
+                  )}
+                  {line.who === "truth" && (
+                    <span className="text-verdict/80">hidden · </span>
+                  )}
+                  {line.text}
+                </p>
+              ))}
+              {visible < LINES.length && (
+                <p className="animate-pulse text-muted/50">▍</p>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-[var(--space-4)] border-t border-rule px-[var(--space-4)] py-[var(--space-4)]">
               <a
                 href="/#play"
-                className="pressable touch-target inline-flex items-center justify-center border border-breaker/50 bg-breaker/10 px-[var(--space-5)] py-[0.875rem] font-mono text-[0.8125rem] font-medium uppercase tracking-[0.14em] text-breaker hover:bg-breaker/20"
+                className="pressable touch-target inline-flex items-center border border-breaker/50 bg-breaker/10 px-[var(--space-5)] py-[0.75rem] font-mono text-[0.75rem] font-medium uppercase tracking-[0.14em] text-breaker hover:bg-breaker/20"
               >
-                paste rules · detect
+                drop your rules
               </a>
               <Link
                 href="/cinema/demo"
-                className="pressable touch-target inline-flex items-center justify-center type-meta text-muted hover:text-ink"
+                className="pressable type-meta text-muted hover:text-ink"
               >
-                watch a tamper in 6s →
+                watch the full race →
               </Link>
             </div>
-          </aside>
+          </div>
+
+          {/* Relatable hits */}
+          <div className="flex flex-col justify-between gap-[var(--space-5)]">
+            <ul className="flex flex-col gap-[var(--space-5)]">
+              {RELATES.map((r) => (
+                <li key={r.title} className="border-b border-rule pb-[var(--space-4)] last:border-b-0">
+                  <p className="font-display text-[1.25rem] tracking-[-0.025em] text-ink md:text-[1.375rem]">
+                    {r.title}
+                  </p>
+                  <p className="font-body mt-[var(--space-2)] max-w-[28ch] text-[var(--text-body-sm)] text-muted">
+                    {r.body}
+                  </p>
+                </li>
+              ))}
+            </ul>
+            <p className="type-meta text-muted">
+              Same model. Same tools. Your{" "}
+              <span className="text-ink">.cursor/rules</span> is the variable.
+              We keep a hidden suite the agent never sees.
+            </p>
+          </div>
         </div>
       </div>
     </section>
