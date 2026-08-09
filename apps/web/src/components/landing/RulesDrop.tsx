@@ -84,21 +84,14 @@ export function RulesDrop({
       }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.16em] text-verdict">
-            goated onboarding
-          </p>
-          <p className="mt-1 text-ink">
-            Drop `.mdc` / `CLAUDE.md` · or roast a public GitHub rules URL
-          </p>
-        </div>
+        <p className="text-ink">Drop a rules file, or pull a public GitHub URL.</p>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
             className="pressable border border-breaker/50 px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-breaker hover:bg-breaker/10"
           >
-            choose file
+            file
           </button>
           <button
             type="button"
@@ -107,12 +100,12 @@ export function RulesDrop({
                 const text = await navigator.clipboard.readText();
                 void ingest(null, text);
               } catch {
-                setNote("Clipboard blocked — paste into the field below.");
+                setNote("Clipboard blocked — paste into the prompt.");
               }
             }}
             className="pressable border border-rule px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-ink hover:border-breaker/40"
           >
-            paste clipboard
+            clipboard
           </button>
         </div>
       </div>
