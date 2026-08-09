@@ -30,7 +30,7 @@ function LoginForm() {
   const next = safeNextParam(searchParams.get("next"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mode, setMode] = useState<"magic" | "password">("magic");
+  const [usePassword, setUsePassword] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(
     searchParams.get("error")
@@ -55,7 +55,7 @@ function LoginForm() {
             email: false,
             google: false,
             github: false,
-            mailpit: "http://127.0.0.1:54324",
+            mailpit: null,
             message: "status probe failed",
           });
         }
@@ -75,7 +75,7 @@ function LoginForm() {
     setMessage(null);
     startTransition(async () => {
       if (!status?.reachable) {
-        setError("Auth backend offline. Run: supabase start --ignore-health-check");
+        setError("Auth is offline. Try again in a moment.");
         return;
       }
       const supabase = createClient();
@@ -103,7 +103,7 @@ function LoginForm() {
     setMessage(null);
     startTransition(async () => {
       if (!status?.reachable) {
-        setError("Auth backend offline. Run: supabase start --ignore-health-check");
+        setError("Auth is offline. Try again in a moment.");
         return;
       }
       if (password.length < 6) {
@@ -126,9 +126,7 @@ function LoginForm() {
           password,
         });
         if (signErr) {
-          setMessage(
-            "Account created. If confirmations are on, check mail then sign in.",
-          );
+          setMessage("Account created. Confirm email if needed, then sign in.");
           return;
         }
         window.location.href = next;
@@ -151,17 +149,15 @@ function LoginForm() {
     setMessage(null);
     startTransition(async () => {
       if (!status?.reachable) {
-        setError("Auth backend offline. Run: supabase start --ignore-health-check");
+        setError("Auth is offline. Try again in a moment.");
         return;
       }
       if (provider === "google" && !status.google) {
-        setError("Google provider not enabled on Auth. Check supabase/.env + restart.");
+        setError("Google sign-in is not enabled yet.");
         return;
       }
       if (provider === "github" && !status.github) {
-        setError(
-          "GitHub not configured. Add GITHUB_CLIENT_ID + GITHUB_CLIENT_SECRET to supabase/.env (callback http://127.0.0.1:54321/auth/v1/callback), then restart supabase.",
-        );
+        setError("GitHub sign-in is not enabled yet.");
         return;
       }
       const supabase = createClient();
@@ -180,87 +176,59 @@ function LoginForm() {
     });
   };
 
-  const providerBits =
-    status == null
-      ? "…"
-      : [
-          status.reachable ? "up" : "down",
-          `e=${status.email ? 1 : 0}`,
-          `g=${status.google ? 1 : 0}`,
-          `gh=${status.github ? 1 : 0}`,
-        ].join(" ");
+  const showGoogle = Boolean(status?.google);
+  const showGithub = Boolean(status?.github);
 
   return (
-    <section className="mx-auto w-full max-w-md border border-rule bg-panel">
-      <header className="border-b border-rule px-4 py-4">
-        <h1 className="font-display text-3xl tracking-[-0.04em] text-ink">
-          Sign in
-        </h1>
-        <p className="mt-1 font-body text-sm text-muted">
-          Needed to submit a match.{" "}
-          <Link href="/cinema/demo" className="text-breaker hover:underline">
-            Watch Cinema Detect
-          </Link>{" "}
-          without an account.
-        </p>
-      </header>
+    <div className="w-full max-w-sm">
+      <h1 className="font-display text-[clamp(2.5rem,10vw,3.25rem)] leading-none tracking-[-0.04em] text-ink">
+        Sign in
+      </h1>
+      <p className="mt-2 font-body text-sm text-muted">
+        Needed to run a live detect.{" "}
+        <Link href="/cinema/demo" className="text-breaker hover:underline">
+          Watch the demo
+        </Link>{" "}
+        without an account.
+      </p>
 
-      <div className="space-y-3 p-4">
-        <div className="flex border border-rule font-mono text-[11px] uppercase tracking-[0.14em]">
-          <button
-            type="button"
-            onClick={() => setMode("magic")}
-            className={`flex-1 px-3 py-2 ${
-              mode === "magic" ? "bg-breaker/10 text-breaker" : "text-muted hover:text-ink"
-            }`}
-          >
-            magic link
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("password")}
-            className={`flex-1 border-l border-rule px-3 py-2 ${
-              mode === "password"
-                ? "bg-breaker/10 text-breaker"
-                : "text-muted hover:text-ink"
-            }`}
-          >
-            password
-          </button>
-        </div>
-
-        <label className="block font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-          email
+      <div className="mt-8 space-y-4">
+        <label className="block">
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+            email
+          </span>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
-            className="mt-2 w-full border border-rule bg-base px-3 py-3 font-mono text-sm text-ink outline-none focus:border-breaker"
+            className="mt-2 w-full border-b border-rule bg-transparent py-3 font-mono text-[15px] text-ink outline-none focus:border-breaker"
             placeholder="you@example.com"
           />
         </label>
 
-        {mode === "password" && (
-          <label className="block font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-            password
+        {usePassword && (
+          <label className="block">
+            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+              password
+            </span>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
-              className="mt-2 w-full border border-rule bg-base px-3 py-3 font-mono text-sm text-ink outline-none focus:border-breaker"
+              className="mt-2 w-full border-b border-rule bg-transparent py-3 font-mono text-[15px] text-ink outline-none focus:border-breaker"
               placeholder="••••••••"
             />
           </label>
         )}
 
-        {mode === "magic" ? (
+        {!usePassword ? (
           <button
             type="button"
             disabled={pending || email.trim().length < 3}
             onClick={magicLink}
-            className="pressable w-full border border-breaker/40 bg-breaker/10 px-4 py-3 font-mono text-[12px] uppercase tracking-[0.16em] text-breaker disabled:opacity-40"
+            className="pressable touch-target w-full border border-breaker/40 bg-breaker/10 px-4 py-3.5 font-mono text-[12px] uppercase tracking-[0.16em] text-breaker disabled:opacity-40"
           >
             {pending ? "sending…" : "send magic link"}
           </button>
@@ -270,7 +238,7 @@ function LoginForm() {
               type="button"
               disabled={pending || email.trim().length < 3}
               onClick={() => passwordAuth("signin")}
-              className="pressable border border-breaker/40 bg-breaker/10 px-3 py-3 font-mono text-[11px] uppercase tracking-[0.14em] text-breaker disabled:opacity-40"
+              className="pressable touch-target border border-breaker/40 bg-breaker/10 px-3 py-3.5 font-mono text-[11px] uppercase tracking-[0.14em] text-breaker disabled:opacity-40"
             >
               sign in
             </button>
@@ -278,14 +246,47 @@ function LoginForm() {
               type="button"
               disabled={pending || email.trim().length < 3}
               onClick={() => passwordAuth("signup")}
-              className="pressable border border-rule px-3 py-3 font-mono text-[11px] uppercase tracking-[0.14em] text-ink hover:border-breaker/40 disabled:opacity-40"
+              className="pressable touch-target border border-rule px-3 py-3.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink hover:border-breaker/40 disabled:opacity-40"
             >
               create
             </button>
           </div>
         )}
 
-        {status?.mailpit && mode === "magic" && (
+        <button
+          type="button"
+          onClick={() => setUsePassword((v) => !v)}
+          className="pressable font-mono text-[11px] text-muted hover:text-ink"
+        >
+          {usePassword ? "use magic link instead" : "use password instead"}
+        </button>
+
+        {(showGoogle || showGithub) && (
+          <div className="space-y-2 pt-2">
+            {showGoogle && (
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => oauth("google")}
+                className="pressable touch-target w-full border border-rule px-4 py-3 font-mono text-[12px] uppercase tracking-[0.14em] text-ink hover:border-breaker/40"
+              >
+                continue with google
+              </button>
+            )}
+            {showGithub && (
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => oauth("github")}
+                className="pressable touch-target w-full border border-rule px-4 py-3 font-mono text-[12px] uppercase tracking-[0.14em] text-ink hover:border-breaker/40"
+              >
+                continue with github
+              </button>
+            )}
+          </div>
+        )}
+
+        {status?.mailpit && !usePassword && (
           <a
             href={status.mailpit}
             target="_blank"
@@ -296,71 +297,39 @@ function LoginForm() {
           </a>
         )}
 
-        <div className="flex items-center gap-3 py-1 font-mono text-[11px] text-muted">
-          <span className="h-px flex-1 bg-rule" />
-          or
-          <span className="h-px flex-1 bg-rule" />
-        </div>
-
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => oauth("google")}
-          className="pressable w-full border border-rule px-4 py-3 font-mono text-[12px] uppercase tracking-[0.14em] text-ink hover:border-breaker/50"
-        >
-          continue with google
-        </button>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => oauth("github")}
-          className="pressable w-full border border-rule px-4 py-3 font-mono text-[12px] uppercase tracking-[0.14em] text-ink hover:border-breaker/50"
-        >
-          continue with github
-        </button>
-
         {message && (
-          <p className="border border-fixer/40 bg-fixer/10 px-3 py-2 font-mono text-[12px] text-fixer">
-            {message}
-          </p>
+          <p className="font-mono text-[12px] text-fixer">{message}</p>
         )}
         {error && (
-          <p
-            className="border border-verdict/40 bg-verdict/10 px-3 py-2 font-mono text-[12px] text-verdict"
-            role="alert"
-          >
-            {error}
+          <p className="font-mono text-[12px] text-verdict" role="alert">
+            {error === "auth_not_configured"
+              ? "Auth is not fully configured yet."
+              : error}
           </p>
         )}
       </div>
-
-      {/* Quiet status line — readable if you know GoTrue / local stack */}
-      <p
-        className="border-t border-rule px-4 py-2 font-mono text-[10px] tracking-wide text-muted/50"
-        title="GoTrue probe"
-      >
-        {`// GET /auth/v1/settings · ${providerBits}`}
-      </p>
-    </section>
+    </div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <main className="min-h-[100dvh] bg-base">
-      <div className="mx-auto flex min-h-[100dvh] max-w-lg flex-col justify-center px-4 py-10">
-        <div className="mb-6">
+    <main className="relative z-[1] min-h-[100dvh] px-4">
+      <div className="mx-auto flex min-h-[100dvh] max-w-lg flex-col">
+        <div className="pt-6">
           <Link href="/" className="pressable inline-block">
-            <Wordmark size="md" />
+            <Wordmark size="sm" />
           </Link>
         </div>
-        <Suspense
-          fallback={
-            <p className="font-mono text-[12px] text-muted">loading…</p>
-          }
-        >
-          <LoginForm />
-        </Suspense>
+        <div className="flex flex-1 flex-col justify-center py-12">
+          <Suspense
+            fallback={
+              <p className="font-mono text-[12px] text-muted">loading…</p>
+            }
+          >
+            <LoginForm />
+          </Suspense>
+        </div>
       </div>
     </main>
   );

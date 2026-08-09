@@ -1,6 +1,5 @@
 import { Wordmark } from "@/components/brand/Wordmark";
 import { HowItWorks } from "@/components/landing/HowItWorks";
-import { InteractivePlayground } from "@/components/landing/InteractivePlayground";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { LieTicker } from "@/components/landing/LieTicker";
 import { RecentReplay } from "@/components/landing/RecentReplay";
@@ -120,42 +119,28 @@ export default async function HomePage({
 
       <HowItWorks />
 
-      <InteractivePlayground />
-
       <section id="watch" className="border-t border-rule">
-        <div className="flex flex-wrap items-end justify-between gap-3 border-b border-rule px-4 py-3 md:px-6">
-          <div>
-            <h2 className="font-display text-2xl font-extrabold tracking-[-0.045em] text-ink md:text-3xl">
-              Latest finished match
-            </h2>
-            <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-              archive · auto-playing
-            </p>
-          </div>
+        <div className="mx-auto flex max-w-5xl items-baseline justify-between gap-3 px-4 py-6">
+          <h2 className="font-display text-xl tracking-[-0.03em] text-ink md:text-2xl">
+            Latest match
+          </h2>
           <Link
             href="/cinema/demo"
             className="pressable font-mono text-[12px] text-breaker hover:underline"
           >
-            open cinema →
+            cinema →
           </Link>
         </div>
-        <div className="h-[min(78vh,720px)] min-h-[420px]">
+        <div className="h-[min(70vh,640px)] min-h-[360px] border-t border-rule">
           <RecentReplay />
         </div>
       </section>
 
-      <footer className="border-t border-rule px-4 py-8 md:px-6">
-        <div className="mx-auto flex max-w-5xl flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <Wordmark size="sm" />
-            <p className="mt-2 max-w-xl font-body text-sm text-muted">
-              Same model. Same tools. Your prompt is the variable. Prove it on a
-              hidden suite, then export a Prompt Pack. When the match ends, the
-              prompt and every call are public.
-            </p>
-          </div>
-          <p className="font-mono text-[11px] text-muted">
-            drop → detect → cinema → share
+      <footer className="border-t border-rule px-4 py-10">
+        <div className="mx-auto max-w-3xl">
+          <Wordmark size="sm" />
+          <p className="mt-3 max-w-md font-body text-sm text-muted">
+            Same model. Same tools. Your prompt is the variable.
           </p>
         </div>
       </footer>

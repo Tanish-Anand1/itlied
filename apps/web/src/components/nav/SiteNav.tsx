@@ -5,47 +5,40 @@ import Link from "next/link";
 export async function SiteNav() {
   const user = await getSessionUser();
   const profile = user ? await getProfile() : null;
+  const handle =
+    (profile as { handle?: string } | null)?.handle ?? "you";
 
   return (
-    <nav className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-rule bg-base/70 px-4 py-2.5 backdrop-blur-xl backdrop-saturate-150">
+    <nav className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-rule bg-base/75 px-4 py-2.5 backdrop-blur-xl backdrop-saturate-150">
       <Link href="/" className="shrink-0">
         <Wordmark size="sm" />
       </Link>
-      <div className="flex items-center gap-3 overflow-x-auto font-mono text-[12px] text-muted sm:gap-4">
-        <a href="/#play" className="shrink-0 text-verdict hover:text-ink">
+      <div className="flex items-center gap-4 font-mono text-[12px] text-muted">
+        <a href="/#play" className="hidden text-verdict hover:text-ink sm:inline">
           detect
         </a>
-        <Link href="/cinema/demo" className="shrink-0 text-breaker hover:text-ink">
-          cinema
+        <Link href="/cinema/demo" className="hover:text-ink">
+          demo
         </Link>
-        <Link href="/ladder" className="shrink-0 hover:text-ink">
+        <Link href="/ladder" className="hidden hover:text-ink sm:inline">
           ladder
-        </Link>
-        <Link href="/seasons" className="shrink-0 hover:text-ink">
-          seasons
         </Link>
         {user ? (
           <>
-            <Link href="/messages" className="shrink-0 hover:text-ink">
-              messages
-            </Link>
-            <Link href="/me" className="shrink-0 hover:text-ink">
+            <Link href="/me" className="hidden hover:text-ink md:inline">
               daily
             </Link>
-            {profile && (profile as { role?: string }).role === "ops" && (
-              <Link href="/ops" className="shrink-0 text-verdict hover:text-ink">
+            {(profile as { role?: string } | null)?.role === "ops" && (
+              <Link href="/ops" className="text-verdict hover:text-ink">
                 ops
               </Link>
             )}
-            <Link
-              href="/settings"
-              className="shrink-0 text-breaker hover:text-ink"
-            >
-              @{(profile as { handle?: string } | null)?.handle ?? "settings"}
+            <Link href="/settings" className="text-breaker hover:text-ink">
+              @{handle}
             </Link>
           </>
         ) : (
-          <Link href="/login" className="shrink-0 text-breaker hover:text-ink">
+          <Link href="/login" className="text-breaker hover:text-ink">
             sign in
           </Link>
         )}

@@ -42,13 +42,7 @@ export function LieTicker() {
     };
   }, []);
 
-  if (!items.length) {
-    return (
-      <div className="border-b border-rule bg-panel px-4 py-2 font-mono text-[11px] text-muted">
-        lie ticker · waiting for the first prove of the day…
-      </div>
-    );
-  }
+  if (!items.length) return null;
 
   const loop = [...items, ...items];
 
